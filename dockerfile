@@ -1,13 +1,34 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y wget gnupg unzip curl \
-  && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update && apt-get install -y google-chrome-stable \
-  && apt-get clean
+# Instala Chrome e dependências básicas
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    gnupg \
+    unzip \
+    fonts-liberation \
+    libnss3 \
+    libxss1 \
+    libgconf-2-4 \
+    libappindicator1 \
+    libasound2 \
+    libgbm1 \
+    xdg-utils \
+    ca-certificates \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
+# Instala o Google Chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
+
+# Define diretório de trabalho
 WORKDIR /app
-COPY . /app
-RUN pip install -r requirements.txt
+COPY . .
 
-CMD ["bash", "start.sh"]
+# Instala as dependências Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Comando de inicialização
+CMD ["python", "app.py"]
