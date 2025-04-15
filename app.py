@@ -11,6 +11,6 @@ options.add_argument("--disable-dev-shm-usage")
 options.binary_location = "/usr/bin/google-chrome"
 
 driver = webdriver.Chrome(options=options)
-driver.get("https://example.com")
+driver.get("https://www.google.com")
 print(driver.title)
 driver.quit()
